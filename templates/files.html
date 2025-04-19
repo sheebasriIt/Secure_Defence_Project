@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Encrypted Files</title>
+</head>
+<body>
+    <h2>Encrypted Files</h2>
+    <ul>
+        {% for file in files %}
+        <li>
+            {{ file }}
+            <form action="/decrypt" method="POST" style="display:inline;">
+                <input type="hidden" name="filename" value="{{ file }}">
+                <input type="submit" value="Decrypt">
+            </form>
+        </li>
+        {% endfor %}
+    </ul>
+    <br>
+    <a href="/">Back to Upload</a>
+</body>
+</html>
