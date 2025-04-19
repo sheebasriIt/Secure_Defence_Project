@@ -27,10 +27,10 @@ A secure file transfer web application that enables encrypted document uploads, 
 ## 🖼 Screenshots
 
 ### Upload Page
-![Upload Page](screenshots/upload.png)
+![encrypt & uploads ](screenshots/upload.png)
 
 ### Decryption Page
-![Decrypt Page](screenshots/decrypt.png)
+![decrypt](screenshots/decrypt.png)
 
 > Make sure you add your screenshots in a folder called screenshots/ and push them too!
 
