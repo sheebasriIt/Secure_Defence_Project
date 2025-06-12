@@ -141,5 +141,5 @@ def view_logs():
     valid = is_chain_valid(chain)
     return render_template('logs.html', chain=chain, valid=valid)
 
-if _name_ == '__main__':
+if __name__ == '__main__':
     app.run(debug=True)
