@@ -7,7 +7,13 @@
 </head>
 <body class="bg-light">
 <div class="container py-5">
-    <h2 class="mb-4 text-center text-primary">Secure Document System</h2>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-primary">Secure Document System</h2>
+        <div>
+            <span class="me-3 text-muted">Logged in as: <strong>{{ username }}</strong> ({{ role }})</span>
+            <a href="{{ url_for('logout') }}" class="btn btn-outline-danger btn-sm">Logout</a>
+        </div>
+    </div>
 
     <div class="card mb-4 p-4 shadow">
         <h5>Encrypt File</h5>
@@ -25,9 +31,11 @@
         </form>
     </div>
 
+    {% if role == 'admin' or role == 'authorized_user' %}
     <div class="text-center">
-        <a href="/logs" class="btn btn-info">View Blockchain Logs (JSON)</a>
+        <a href="{{ url_for('view_logs') }}" class="btn btn-info">View Blockchain Logs</a>
     </div>
+    {% endif %}
 </div>
 </body>
 </html>
