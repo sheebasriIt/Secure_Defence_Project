@@ -3,18 +3,23 @@ from flask import Flask, render_template, request, redirect, url_for, session, s
 from werkzeug.utils import secure_filename
 from cryptography.fernet import Fernet
 from functools import wraps
-from models import users, add_user, get_user
+from models import db, add_user, get_user, check_user_password
 from blockchain import add_block, load_chain, is_chain_valid
 
 app = Flask(__name__)
 app.secret_key = 'sheeba'
 
-# Folder setup
+# Config for SQLAlchemy
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db.init_app(app)
+
+# Create folders
 os.makedirs('encrypted_files', exist_ok=True)
 os.makedirs('decrypted_files', exist_ok=True)
 os.makedirs('uploads', exist_ok=True)
 
-# Load or create encryption key
+# Encryption key
 if os.path.exists('secret.key'):
     with open('secret.key', 'rb') as key_file:
         key = key_file.read()
@@ -25,8 +30,7 @@ else:
 
 cipher = Fernet(key)
 
-# ---------------------- Decorators ----------------------
-
+# Login protection
 def login_required(role=None):
     def wrapper(f):
         @wraps(f)
@@ -39,8 +43,7 @@ def login_required(role=None):
         return decorated_function
     return wrapper
 
-# ---------------------- Routes ----------------------
-
+# Home route
 @app.route('/')
 def home():
     if 'username' not in session:
@@ -49,8 +52,7 @@ def home():
         return redirect(url_for('uploader_dashboard'))
     elif session['role'] == 'admin':
         return redirect(url_for('admin_dashboard'))
-    else:
-        return redirect(url_for('login'))
+    return redirect(url_for('login'))
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -58,12 +60,12 @@ def login():
         uname = request.form['username']
         pwd = request.form['password']
         user = get_user(uname)
-        if user and user['password'] == pwd:
+        if user and check_user_password(user, pwd):
             session['username'] = uname
-            session['role'] = user['role']
-            if user['role'] == 'uploader':
+            session['role'] = user.role
+            if user.role == 'uploader':
                 return redirect(url_for('uploader_dashboard'))
-            elif user['role'] == 'admin':
+            elif user.role == 'admin':
                 return redirect(url_for('admin_dashboard'))
         return "Invalid username or password"
     return render_template('login.html')
@@ -141,5 +143,24 @@ def view_logs():
     valid = is_chain_valid(chain)
     return render_template('logs.html', chain=chain, valid=valid)
 
-if _name_ == '__main__':
+if __name__ == '__main__':
+    with app.app_context():
+        db.create_all()  # Only first time
     app.run(debug=True)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
