@@ -144,6 +144,7 @@ def view_logs():
     return render_template('logs.html', chain=chain, valid=valid)
 
 if __name__ == '__main__':
+<<<<<<< HEAD
     with app.app_context():
         db.create_all()  # Only first time
     app.run(debug=True)
@@ -164,3 +165,6 @@ if __name__ == '__main__':
 
 
 
+=======
+    app.run(debug=True)
+>>>>>>> 10c11696daaedde5298c06acd93b98843da94dff
